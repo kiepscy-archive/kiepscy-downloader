@@ -52,27 +52,35 @@ def get_files(odcinek):
 
 @app.route("/get_links", methods=["GET"])
 def get_links():
-    odc = request.args.get("odcinek")
-    if not odc:
-        return jsonify({"error": "Brak parametru 'odcinek'"}), 400
+    try:
+        odc = request.args.get("odcinek")
+        if not odc:
+            return jsonify({"error": "Brak parametru 'odcinek'"}), 400
 
-    files = get_files(odc)
-    if not files:
-        return jsonify({"error": "Nie znaleziono takiego sezonu/odcinka"}), 404
+        files = get_files(odc)
+        if not files:
+            return jsonify({"error": "Nie znaleziono takiego sezonu/odcinka"}), 404
 
-    ch = Chomyk("KiepscyArchive", "KiepscyArchive_0078224371")
-    for f in files:
-        ch.dl(BASE_URL + f)
+        ch = Chomyk("KiepscyArchive", "KiepscyArchive_0078224371", maxThreads=5, directory="/tmp")
+        for f in files:
+            ch.dl(BASE_URL + f)
 
-    for i in range(10):
-        if ch.download_links:
-            break
-        time.sleep(0.5)
+        import time
+        for _ in range(10):
+            if ch.download_links:
+                break
+            time.sleep(0.5)
 
-    if not ch.download_links:
-        return jsonify({"error": "Brak linków (możliwe problemy z autoryzacją)"}), 500
+        if not ch.download_links:
+            return jsonify({"error": "Brak linków (możliwe problemy z autoryzacją lub transferem)"}), 500
 
-    return jsonify(ch.download_links)
+        return jsonify(ch.download_links)
+
+    except Exception as e:
+        import traceback
+        print("❌ Błąd aplikacji:", e)
+        traceback.print_exc()
+        return jsonify({"error": f"Błąd serwera: {str(e)}"}), 500
 
 @app.route("/")
 def index():
