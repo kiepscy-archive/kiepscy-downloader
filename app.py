@@ -38,27 +38,24 @@ COMMANDS = {
     "S31": (577, 588),
 }
 
-def get_files_to_download(file_number):
-    file_number = file_number.strip().upper()
-    if file_number in COMMANDS:
-        val = COMMANDS[file_number]
-        if isinstance(val, tuple):
-            return [f"{i:03}.mp4" for i in range(val[0], val[1] + 1)]
-        else:
-            return val
-    elif file_number == "ALL":
+def get_files(odcinek):
+    odcinek = odcinek.strip().upper()
+    if odcinek in COMMANDS:
+        val = COMMANDS[odcinek]
+        return [f"{i:03}.mp4" for i in range(val[0], val[1] + 1)] if isinstance(val, tuple) else val
+    elif odcinek == "ALL":
         return [f"{i:03}.mp4" for i in range(0, 590)]
-    elif file_number.isdigit() and 0 <= int(file_number) <= 589:
-        return [f"{int(file_number):03}.mp4"]
+    elif odcinek.isdigit() and 0 <= int(odcinek) <= 589:
+        return [f"{int(odcinek):03}.mp4"]
     return []
 
 @app.route("/get_links", methods=["GET"])
 def get_links():
-    odcinek = request.args.get("odcinek", "")
-    if not odcinek:
+    odc = request.args.get("odcinek")
+    if not odc:
         return jsonify({"error": "Brak parametru 'odcinek'"}), 400
 
-    files = get_files_to_download(odcinek)
+    files = get_files(odc)
     if not files:
         return jsonify({"error": "Nie znaleziono takiego sezonu/odcinka"}), 404
 
@@ -66,16 +63,19 @@ def get_links():
     for f in files:
         ch.dl(BASE_URL + f)
 
+    if not ch.download_links:
+        return jsonify({"error": "Brak linków (możliwe problemy z autoryzacją)"}), 500
+
     return jsonify(ch.download_links)
 
 @app.route("/")
 def index():
     return """
-    <h2>Chomikuj Link Generator</h2>
+    <h2>Generator linków Chomikuj</h2>
     <form action="/get_links" method="get">
-        <label>Odcinek lub sezon (np. 123 albo S01):</label>
-        <input name="odcinek" type="text" />
-        <input type="submit" value="Pobierz linki" />
+        <label>Podaj odcinek lub sezon (np. 123, S01, ALL):</label><br>
+        <input type="text" name="odcinek" />
+        <input type="submit" value="Generuj linki" />
     </form>
     """
 
