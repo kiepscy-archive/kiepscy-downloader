@@ -85,7 +85,6 @@ class Chomyk:
         self.totalItems = 0
         self.username = username
         self.password = hashlib.md5(password.encode("utf-8")).hexdigest()
-        self.cls()
         self.checkThreads()
         self.login()
         
@@ -93,8 +92,8 @@ class Chomyk:
         os.system('cls' if os.name=='nt' else 'clear')
 
     def printline(self, line, text):
-        sys.stdout.write("\x1b7\x1b[%d;%df%s\x1b8" % (line, 2, text))
-        sys.stdout.flush()
+        # sys.stdout.write("\x1b7\x1b[%d;%df%s\x1b8" % (line, 2, text))
+        # sys.stdout.flush()
         
     def checkThreads(self):
         threadsInprogress = 0
