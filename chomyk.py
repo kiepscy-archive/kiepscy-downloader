@@ -87,6 +87,7 @@ class Chomyk:
         self.password = hashlib.md5(password.encode("utf-8")).hexdigest()
         self.checkThreads()
         self.login()
+	self.download_links = []
         
     def cls(self):
         os.system('cls' if os.name=='nt' else 'clear')
@@ -282,7 +283,6 @@ class Chomyk:
 
     def parseResponse(self, resp):
         self.printline (3, 'Maks watkow: ' + str(self.maxThreads))
-        self.download_links = []
         respTree = et.fromstring(resp)
         
         #Autoryzacja
