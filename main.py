@@ -9,11 +9,8 @@ def index():
     if request.method == 'POST':
         numer = request.form.get('numer')
         if numer:
-            try:
-                subprocess.Popen(['python3', 'chomyk.py', numer])
-                message = f'Pobieranie {numer} rozpoczęte (na serwerze).'
-            except Exception as e:
-                message = f'Błąd: {str(e)}'
+            subprocess.Popen(['python3', 'chomyk.py', numer])
+            message = f'Pobieranie {numer} rozpoczęte.'
         else:
             message = 'Nie podano numeru!'
     return render_template('index.html', message=message)
