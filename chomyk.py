@@ -313,7 +313,7 @@ class Chomyk:
                     url = dlfile.find('{http://chomikuj.pl/}url')
                     idx = dlfile.find('{http://chomikuj.pl/}id').text
                     cost = dlfile.find('{http://chomikuj.pl/}cost')
-                    if url.text == None:
+                    if url is None or url.text is None:
                         agreementInfo = dlfile.find("{http://chomikuj.pl/}agreementInfo/{http://chomikuj.pl/}AgreementInfo/{http://chomikuj.pl/}name").text
                         costInfo = dlfile.find("{http://chomikuj.pl/}agreementInfo/{http://chomikuj.pl/}AgreementInfo/{http://chomikuj.pl/}cost")
                         
@@ -325,11 +325,13 @@ class Chomyk:
                             self.dl_step_2(idx, agreementInfo, cost)
                         else:
                             self.printline (2,"Blad: brak wystarczajacego limitu transferu")
-                    else:
+                    elif url is not None and url.text:
+                        name = dlfile.find('{http://chomikuj.pl/}name').text or "brak"
                         self.download_links.append({
-                            "name": dlfile.find('{http://chomikuj.pl/}name').text,
+                            "name": name,
                             "url": url.text
-                        })
+    })
+
                         
 def main(argv):
     username = MY_USERNAME
