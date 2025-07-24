@@ -87,7 +87,7 @@ class Chomyk:
         self.password = hashlib.md5(password.encode("utf-8")).hexdigest()
         self.checkThreads()
         self.login()
-	self.download_links = []
+        self.download_links = []
         
     def cls(self):
         os.system('cls' if os.name=='nt' else 'clear')
