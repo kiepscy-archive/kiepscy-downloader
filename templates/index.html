@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Pobierz odcinek</title>
+</head>
+<body>
+    <h2>Pobierz odcinek lub sezon</h2>
+    <form method="POST">
+        <label>Numer odcinka lub sezonu (np. 013 lub S01):</label><br>
+        <input type="text" name="numer" required>
+        <button type="submit">Pobierz</button>
+    </form>
+    {% if message %}
+        <p><strong>{{ message }}</strong></p>
+    {% endif %}
+</body>
+</html>
