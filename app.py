@@ -61,7 +61,7 @@ def get_links():
         if not files:
             return jsonify({"error": "Nie znaleziono takiego sezonu/odcinka"}), 404
 
-        ch = Chomyk("KiepscyArchive", "KiepscyArchive_0078224371", maxThreads=5, directory="/tmp")
+        ch = Chomyk("KiepscyArchive", "KiepscyArchive_0078224371", maxThreads=5, directory=tempfile.gettempdir())
         for f in files:
             ch.dl(BASE_URL + f)
 
