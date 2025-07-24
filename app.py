@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from chomyk import Chomyk, BASE_URL
+import time
 
 app = Flask(__name__)
 
@@ -62,6 +63,11 @@ def get_links():
     ch = Chomyk("KiepscyArchive", "KiepscyArchive_0078224371")
     for f in files:
         ch.dl(BASE_URL + f)
+
+    for i in range(10):
+        if ch.download_links:
+            break
+        time.sleep(0.5)
 
     if not ch.download_links:
         return jsonify({"error": "Brak linków (możliwe problemy z autoryzacją)"}), 500
