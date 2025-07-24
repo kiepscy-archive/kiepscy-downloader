@@ -85,7 +85,7 @@ def get_links():
 @app.route("/")
 def index():
     return """
-    <h2>Kiepscy Downloader</h2>
+    <h2>Kiepscy Downloader </h2>
     <form action="/get_links" method="get">
         <label>Podaj odcinek lub sezon (np. 123, S01, ALL):</label><br>
         <input type="text" name="odcinek" />
