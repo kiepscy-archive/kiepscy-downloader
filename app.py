@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from chomyk import Chomyk, BASE_URL
+import requests
 import time
 
 app = Flask(__name__)
