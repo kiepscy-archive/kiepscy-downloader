@@ -112,7 +112,7 @@ def index():
     return """
     <h2>Kiepscy Downloader </h2>
     <form action="/download" method="get">
-        <label>Podaj odcinek lub sezon (np. 123, S01):</label><br>
+        <label>Podaj numer odcinka:</label><br>
         <input type="text" name="odcinek" />
         <input type="submit" value="Pobierz" />
     </form>
