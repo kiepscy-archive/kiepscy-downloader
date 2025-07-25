@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, jsonify
 from chomyk import Chomyk, BASE_URL
 import requests
 import time
