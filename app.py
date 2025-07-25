@@ -39,6 +39,38 @@ COMMANDS = {
     "S31": (577, 588),
 }
 
+@app.route("/watch", methods=["GET"])
+def watch():
+    odc = request.args.get("odcinek")
+    if not odc:
+        return "Brak parametru 'odcinek'", 400
+
+    try:
+        # Lokalne zapytanie do własnego endpointu
+        resp = requests.get("http://localhost:10000/get_links", params={"odcinek": odc})
+        if resp.status_code != 200:
+            return f"Błąd z /get_links: {resp.json().get('error', 'Nieznany błąd')}", 500
+
+        links = resp.json()
+        if not links:
+            return "Brak dostępnych linków wideo", 404
+
+        video = links[0]  # pierwszy odcinek, np. dla S01
+        html = f"""
+        <h2>Odtwarzacz: {video['name']}</h2>
+        <video width="640" height="360" controls autoplay>
+            <source src="{video['url']}" type="video/mp4">
+            Twoja przeglądarka nie obsługuje tagu video.
+        </video>
+        <br><a href="/">⬅️ Powrót</a>
+        """
+        return render_template_string(html)
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return f"Błąd serwera: {str(e)}", 500
+
 def get_files(odcinek):
     odcinek = odcinek.strip().upper()
     if odcinek in COMMANDS:
@@ -85,11 +117,11 @@ def get_links():
 @app.route("/")
 def index():
     return """
-    <h2>Kiepscy Downloader </h2>
-    <form action="/get_links" method="get">
-        <label>Podaj odcinek lub sezon (np. 123, S01, ALL):</label><br>
+    <h2>Kiepscy Player</h2>
+    <form action="/watch" method="get">
+        <label>Podaj numer odcinka:</label><br>
         <input type="text" name="odcinek" />
-        <input type="submit" value="Generuj linki" />
+        <input type="submit" value="Odtwórz" />
     </form>
     """
 
