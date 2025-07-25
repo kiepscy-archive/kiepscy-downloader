@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, redirect
 from chomyk import Chomyk, BASE_URL
 import time
 
@@ -82,14 +82,38 @@ def get_links():
         traceback.print_exc()
         return jsonify({"error": f"Błąd serwera: {str(e)}"}), 500
 
+@app.route("/download", methods=["GET"])
+def download():
+    odc = request.args.get("odcinek")
+    if not odc:
+        return "Brak parametru 'odcinek'", 400
+
+    try:
+        # lokalne zapytanie do get_links
+        resp = requests.get("http://localhost:10000/get_links", params={"odcinek": odc})
+        if resp.status_code != 200:
+            return f"Błąd: {resp.json().get('error', 'Nieznany problem')}", 500
+
+        links = resp.json()
+        if not links:
+            return "Brak dostępnych linków", 404
+
+        first_url = links[0]['url']
+        return redirect(first_url)
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return f"Błąd serwera: {str(e)}", 500
+
 @app.route("/")
 def index():
     return """
     <h2>Kiepscy Downloader </h2>
-    <form action="/get_links" method="get">
-        <label>Podaj odcinek lub sezon (np. 123, S01, ALL):</label><br>
+    <form action="/download" method="get">
+        <label>Podaj odcinek lub sezon (np. 123, S01):</label><br>
         <input type="text" name="odcinek" />
-        <input type="submit" value="Generuj linki" />
+        <input type="submit" value="Pobierz" />
     </form>
     """
 
