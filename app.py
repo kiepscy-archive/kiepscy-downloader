@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, jsonify
+from flask import Flask, request, redirect, jsonify, render_template
 from chomyk import Chomyk, BASE_URL
 import requests
 import time
@@ -109,14 +109,7 @@ def download():
 
 @app.route("/")
 def index():
-    return """
-    <h2>Kiepscy Downloader </h2>
-    <form action="/download" method="get">
-        <label>Podaj numer odcinka:</label><br>
-        <input type="text" name="odcinek" />
-        <input type="submit" value="Pobierz" />
-    </form>
-    """
+    return render_template("index.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
