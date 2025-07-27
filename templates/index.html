@@ -37,6 +37,18 @@
         margin-bottom: 20px;
         color: #222;
         text-shadow: 1px 1px 2px #fff;
+
+    .help-link {
+    margin-top: 20px;
+    color: #0044cc;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.help-link:hover {
+    color: #001177;
+}
     }
 </style>
 </head>
@@ -50,5 +62,6 @@
     {% if message %}
         <p><strong>{{ message }}</strong></p>
     {% endif %}
+    <a href="/instrukcja" class="help-link">Jak używać?</a>
 </body>
 </html>
