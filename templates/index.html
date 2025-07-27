@@ -20,6 +20,13 @@
         backdrop-filter: brightness(0.95);
     }
 
+    .logo {
+        max-width: 300px;
+        margin-bottom: 40px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+
     form {
         background: rgba(255, 255, 255, 0.85);
         padding: 20px;
@@ -33,10 +40,13 @@
         font-size: 1rem;
     }
 
-    h2 {
-        margin-bottom: 20px;
-        color: #222;
-        text-shadow: 1px 1px 2px #fff;
+    label {
+        font-weight: bold;
+    }
+
+    p {
+        margin-top: 20px;
+        font-weight: bold;
     }
 
     .help-link {
@@ -54,9 +64,9 @@
 </style>
 </head>
 <body>
-        <center><h2>Kiepscy Downloader </h2></center>
+        <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Logo" class="logo">
     <form action="/download" method="get">
-        <label>Podaj numer odcinka:</label><br>
+        <center><label>Podaj numer odcinka:</label></center><br>
         <input type="text" name="odcinek" />
         <input type="submit" value="Pobierz" />
         <br><br><center><a href="/instrukcja" class="help-link">Jak używać?</a></center>
