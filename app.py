@@ -115,28 +115,5 @@ def index():
 def instrukcja():
     return render_template("instrukcja.html")
 
-@app.route("/vlc")
-def open_in_vlc():
-    odc = request.args.get("odcinek")
-    if not odc:
-        return "Brak parametru 'odcinek'", 400
-
-    try:
-        resp = requests.get("http://localhost:10000/get_links", params={"odcinek": odc})
-        if resp.status_code != 200:
-            return f"Błąd: {resp.json().get('error', 'Nieznany problem')}", 500
-
-        links = resp.json()
-        if not links:
-            return "Brak dostępnych linków", 404
-
-        first_url = links[0]['url']
-        return redirect(f"vlc://{first_url}")
-
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return f"Błąd serwera: {str(e)}", 500
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
