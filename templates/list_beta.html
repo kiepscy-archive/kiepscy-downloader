@@ -128,12 +128,21 @@
       .then(data => {
         allEpisodes = data;
         createSeasonOptions();
-        renderEpisodes();
+
+        const sezonParam = getUrlParam("sezon");
+        if (sezonParam !== null) {
+          const select = document.getElementById("seasonSelect");
+          select.value = sezonParam;
+          renderEpisodes(sezonParam);
+        } else {
+          renderEpisodes();
+        }
       })
-      .catch(error => {
-        document.getElementById("list").innerHTML = "Błąd wczytywania danych.";
-        console.error("Błąd JSON:", error);
-      });
+    
+    function getUrlParam(name) {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(name);
+}
   </script>
 
 </body>
