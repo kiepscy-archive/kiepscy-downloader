@@ -131,18 +131,7 @@ def open_in_vlc():
             return "Brak dostępnych linków", 404
 
         first_url = links[0]['url']
-        html = f"""
-        <html>
-            <head><title>Otwórz w VLC</title></head>
-            <body>
-                <p>Kliknij poniższy link, aby otworzyć odcinek w VLC (lub skopiuj go do aplikacji VLC):</p>
-                <p><a href="{first_url}">{first_url}</a></p>
-                <br>
-                <a href="/">⟵ Powrót</a>
-            </body>
-        </html>
-        """
-        return render_template_string(html)
+        return redirect(f"vlc://{first_url}")
 
     except Exception as e:
         import traceback
