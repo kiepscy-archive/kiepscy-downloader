@@ -115,5 +115,9 @@ def index():
 def instrukcja():
     return render_template("instrukcja.html")
 
+@app.route("/list_beta")
+def list_beta():
+    return render_template("list_beta.html")
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
