@@ -76,7 +76,7 @@
           button.addEventListener('click', () => {
             const episode = button.getAttribute('data-episode');
             // Zmień ten URL na własny skrypt pobierania z Chomikuj:
-            const downloadUrl = `/pobierz?odcinek=${encodeURIComponent(episode)}`;
+            const downloadUrl = `/download?odcinek=${encodeURIComponent(episode)}`;
             window.location.href = downloadUrl;
           });
         });
