@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Odtwarzacz</title>
+    <link href="https://unpkg.com/video.js/dist/video-js.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/video.js/dist/video.min.js"></script>
+</head>
+<body>
+    <h1>Odtwarzacz wideo</h1>
+    <p>Jeśli nie ma dźwięku, <a href="/instrukcja">zobacz instrukcję</a></p>
+
+    <video id="my-video" class="video-js vjs-default-skin" controls preload="auto" width="640" height="360"></video>
+
+    <script>
+        fetch(`/get_links?odcinek={{ odc }}`)
+            .then(resp => resp.json())
+            .then(data => {
+                if (!data || !data[0] || !data[0].url) {
+                    alert("Brak linku do pliku");
+                    return;
+                }
+                const url = data[0].url;
+                const player = videojs('my-video');
+                player.src({
+                    src: url,
+                    type: 'video/mp4'
+                });
+                player.play();
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Wystąpił błąd podczas pobierania linku.");
+            });
+    </script>
+</body>
+</html>
