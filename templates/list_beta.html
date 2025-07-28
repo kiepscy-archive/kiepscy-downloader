@@ -7,6 +7,9 @@
     body {
       font-family: sans-serif;
     }
+    #filter {
+      margin-bottom: 20px;
+    }
     .item {
       display: flex;
       align-items: flex-start;
@@ -46,44 +49,90 @@
 <body>
 
   <h1>Lista odcinków</h1>
+
+  <div id="filter">
+    <label for="seasonSelect">Wybierz sezon:</label>
+    <select id="seasonSelect">
+      <option value="all">Wszystkie</option>
+    </select>
+  </div>
+
   <div id="list">Wczytywanie...</div>
 
   <script>
+    let allEpisodes = [];
+
+    // Tworzy opcje sezonów (1–31 + specjalne = 32)
+    function createSeasonOptions() {
+      const select = document.getElementById("seasonSelect");
+      for (let i = 1; i <= 31; i++) {
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = "Sezon " + i;
+        select.appendChild(opt);
+      }
+      const special = document.createElement("option");
+      special.value = 32;
+      special.textContent = "Odcinki specjalne";
+      select.appendChild(special);
+    }
+
+    // Renderuje listę odcinków, opcjonalnie filtrowaną po sezonie
+    function renderEpisodes(seasonFilter = "all") {
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+
+      const filtered = seasonFilter === "all"
+        ? allEpisodes
+        : allEpisodes.filter(e => String(e.season) === String(seasonFilter));
+
+      if (filtered.length === 0) {
+        list.innerHTML = "<p>Brak odcinków dla wybranego sezonu.</p>";
+        return;
+      }
+
+      filtered.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item";
+
+        div.innerHTML = `
+          <img src="${item.thumbnail}" alt="${item.title}">
+          <div class="text">
+            <h2>${item.title}</h2>
+            <p>${item.description}</p>
+            <button class="download-btn" data-episode="${item.episodeNumber}">Pobierz</button>
+          </div>
+        `;
+
+        list.appendChild(div);
+      });
+
+      // Obsługa kliknięć przycisków "Pobierz"
+      document.querySelectorAll('.download-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          const episode = button.getAttribute('data-episode');
+          const downloadUrl = `/pobierz?odcinek=${encodeURIComponent(episode)}`;
+          window.location.href = downloadUrl;
+        });
+      });
+    }
+
+    // Obsługuje zmianę sezonu
+    document.getElementById("seasonSelect").addEventListener("change", e => {
+      renderEpisodes(e.target.value);
+    });
+
+    // Ładowanie danych z JSON i render
     fetch('static/episodes_merged.json')
       .then(response => response.json())
       .then(data => {
-        const list = document.getElementById("list");
-        list.innerHTML = "";
-
-        data.forEach(item => {
-          const div = document.createElement("div");
-          div.className = "item";
-
-          div.innerHTML = `
-            <img src="${item.thumbnail}" alt="${item.title}">
-            <div class="text">
-              <h2>${item.title}</h2>
-              <p>${item.description}</p>
-              <button class="download-btn" data-episode="${item.episodeNumber}">Pobierz</button>
-            </div>
-          `;
-
-          list.appendChild(div);
-        });
-
-        // Obsługa kliknięcia przycisków "Pobierz"
-        document.querySelectorAll('.download-btn').forEach(button => {
-          button.addEventListener('click', () => {
-            const episode = button.getAttribute('data-episode');
-            // Zmień ten URL na własny skrypt pobierania z Chomikuj:
-            const downloadUrl = `/download?odcinek=${encodeURIComponent(episode)}`;
-            window.location.href = downloadUrl;
-          });
-        });
+        allEpisodes = data;
+        createSeasonOptions();
+        renderEpisodes();
       })
       .catch(error => {
         document.getElementById("list").innerHTML = "Błąd wczytywania danych.";
-        console.error("Błąd wczytywania JSON:", error);
+        console.error("Błąd JSON:", error);
       });
   </script>
 
