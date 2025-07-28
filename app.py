@@ -115,5 +115,12 @@ def index():
 def instrukcja():
     return render_template("instrukcja.html")
 
+@app.route("/player")
+def player():
+    odc = request.args.get("odcinek")
+    if not odc:
+        return "Brak parametru 'odcinek'", 400
+    return render_template("player.html", odc=odc)
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
