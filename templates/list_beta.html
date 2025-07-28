@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Lista z pliku JSON</title>
+  <title>Lista odcinków</title>
   <style>
     body {
       font-family: sans-serif;
@@ -27,14 +27,25 @@
       font-size: 18px;
     }
     .text p {
-      margin: 0;
+      margin: 0 0 10px;
       color: #555;
+    }
+    .download-btn {
+      padding: 6px 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .download-btn:hover {
+      background: #0056b3;
     }
   </style>
 </head>
 <body>
 
-  <h1>Lista z JSON</h1>
+  <h1>Lista odcinków</h1>
   <div id="list">Wczytywanie...</div>
 
   <script>
@@ -42,7 +53,7 @@
       .then(response => response.json())
       .then(data => {
         const list = document.getElementById("list");
-        list.innerHTML = ""; // usuwa "Wczytywanie..."
+        list.innerHTML = "";
 
         data.forEach(item => {
           const div = document.createElement("div");
@@ -53,10 +64,21 @@
             <div class="text">
               <h2>${item.title}</h2>
               <p>${item.description}</p>
+              <button class="download-btn" data-episode="${item.episodeNumber}">Pobierz</button>
             </div>
           `;
 
           list.appendChild(div);
+        });
+
+        // Obsługa kliknięcia przycisków "Pobierz"
+        document.querySelectorAll('.download-btn').forEach(button => {
+          button.addEventListener('click', () => {
+            const episode = button.getAttribute('data-episode');
+            // Zmień ten URL na własny skrypt pobierania z Chomikuj:
+            const downloadUrl = `/pobierz?odcinek=${encodeURIComponent(episode)}`;
+            window.location.href = downloadUrl;
+          });
         });
       })
       .catch(error => {
