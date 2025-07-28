@@ -111,7 +111,7 @@
       document.querySelectorAll('.download-btn').forEach(button => {
         button.addEventListener('click', () => {
           const episode = button.getAttribute('data-episode');
-          const downloadUrl = `/pobierz?odcinek=${encodeURIComponent(episode)}`;
+          const downloadUrl = `/download?odcinek=${encodeURIComponent(episode)}`;
           window.location.href = downloadUrl;
         });
       });
