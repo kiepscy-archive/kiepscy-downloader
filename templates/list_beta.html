@@ -8,7 +8,7 @@
       margin: 0;
       padding: 0;
       font-family: sans-serif;
-      background-image: url("{{ url_for('static', filename='background.jpg') }}");
+      background-image: url("static/background.jpg"); /* <-- poprawione */
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -112,13 +112,14 @@
       <label for="seasonSelect">Wybierz sezon:</label>
       <select id="seasonSelect">
         <option value="all">Wszystkie</option>
+        <!-- Reszta zostanie dodana w JS -->
       </select>
     </div>
 
     <div id="list">Wczytywanie...</div>
   </div>
 
-  <script>
+  <script defer>
     let allEpisodes = [];
 
     function createSeasonOptions() {
@@ -173,24 +174,30 @@
       });
     }
 
-    document.getElementById("seasonSelect").addEventListener("change", e => {
-      renderEpisodes(e.target.value);
-    });
-
-    fetch('static/episodes_merged.json')
-      .then(response => response.json())
-      .then(data => {
-        allEpisodes = data;
-        createSeasonOptions();
-
-        const sezonParam = getUrlParam("sezon");
-        if (sezonParam !== null) {
-          document.getElementById("seasonSelect").value = sezonParam;
-          renderEpisodes(sezonParam);
-        } else {
-          renderEpisodes();
-        }
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("seasonSelect").addEventListener("change", e => {
+        renderEpisodes(e.target.value);
       });
+
+      fetch('static/episodes_merged.json')
+        .then(response => response.json())
+        .then(data => {
+          allEpisodes = data;
+          createSeasonOptions();
+
+          const sezonParam = getUrlParam("sezon");
+          if (sezonParam !== null) {
+            document.getElementById("seasonSelect").value = sezonParam;
+            renderEpisodes(sezonParam);
+          } else {
+            renderEpisodes();
+          }
+        })
+        .catch(error => {
+          document.getElementById("list").innerHTML = "<p>Błąd ładowania danych.</p>";
+          console.error("Błąd JSON:", error);
+        });
+    });
 
     function getUrlParam(name) {
       const params = new URLSearchParams(window.location.search);
