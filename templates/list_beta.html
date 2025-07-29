@@ -8,7 +8,7 @@
       margin: 0;
       padding: 0;
       font-family: sans-serif;
-      background-image: url("static/background.jpg"); /* <-- poprawione */
+      background-image: url("{{ url_for('static', filename='background.jpg') }}");
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -26,7 +26,21 @@
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
       max-width: 900px;
       width: 90%;
+      min-height: 80vh;           /* <-- Dodane */
+      overflow-y: auto;           /* <-- Dodane */
     }
+
+    #seasonSelect {
+      margin-left: 10px;
+      padding: 6px 10px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #aaa;
+      background: white;
+      color: black;
+      min-width: 150px;           /* <-- Dodane */
+    }
+
 
     .top-bar {
       display: flex;
@@ -105,21 +119,20 @@
   <div class="container">
     <div class="top-bar">
       <h1>Lista odcinków</h1>
-      <a href="/" class="back-link">Powrót do strony głównej</a>
+      <a href="/index.html" class="back-link">Powrót do strony głównej</a>
     </div>
 
     <div id="filter">
       <label for="seasonSelect">Wybierz sezon:</label>
       <select id="seasonSelect">
         <option value="all">Wszystkie</option>
-        <!-- Reszta zostanie dodana w JS -->
       </select>
     </div>
 
     <div id="list">Wczytywanie...</div>
   </div>
 
-  <script defer>
+  <script>
     let allEpisodes = [];
 
     function createSeasonOptions() {
@@ -174,30 +187,24 @@
       });
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("seasonSelect").addEventListener("change", e => {
-        renderEpisodes(e.target.value);
-      });
-
-      fetch('static/episodes_merged.json')
-        .then(response => response.json())
-        .then(data => {
-          allEpisodes = data;
-          createSeasonOptions();
-
-          const sezonParam = getUrlParam("sezon");
-          if (sezonParam !== null) {
-            document.getElementById("seasonSelect").value = sezonParam;
-            renderEpisodes(sezonParam);
-          } else {
-            renderEpisodes();
-          }
-        })
-        .catch(error => {
-          document.getElementById("list").innerHTML = "<p>Błąd ładowania danych.</p>";
-          console.error("Błąd JSON:", error);
-        });
+    document.getElementById("seasonSelect").addEventListener("change", e => {
+      renderEpisodes(e.target.value);
     });
+
+    fetch('static/episodes_merged.json')
+      .then(response => response.json())
+      .then(data => {
+        allEpisodes = data;
+        createSeasonOptions();
+
+        const sezonParam = getUrlParam("sezon");
+        if (sezonParam !== null) {
+          document.getElementById("seasonSelect").value = sezonParam;
+          renderEpisodes(sezonParam);
+        } else {
+          renderEpisodes();
+        }
+      });
 
     function getUrlParam(name) {
       const params = new URLSearchParams(window.location.search);
