@@ -131,85 +131,90 @@
 
     <div id="list">Wczytywanie...</div>
 
-  <script>
-    let allEpisodes = [];
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let allEpisodes = [];
 
-    function createSeasonOptions() {
-      const select = document.getElementById("seasonSelect");
-      for (let i = 1; i <= 31; i++) {
-        const opt = document.createElement("option");
-        opt.value = i;
-        opt.textContent = "Sezon " + i;
-        select.appendChild(opt);
-      }
-      const special = document.createElement("option");
-      special.value = 32;
-      special.textContent = "Odcinki specjalne";
-      select.appendChild(special);
+  function createSeasonOptions() {
+    const select = document.getElementById("seasonSelect");
+    for (let i = 1; i <= 31; i++) {
+      const opt = document.createElement("option");
+      opt.value = i;
+      opt.textContent = "Sezon " + i;
+      select.appendChild(opt);
+    }
+    const special = document.createElement("option");
+    special.value = 32;
+    special.textContent = "Odcinki specjalne";
+    select.appendChild(special);
+  }
+
+  function renderEpisodes(seasonFilter = "all") {
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+
+    const filtered = seasonFilter === "all"
+      ? allEpisodes
+      : allEpisodes.filter(e => String(e.season) === String(seasonFilter));
+
+    if (filtered.length === 0) {
+      list.innerHTML = "<p>Brak odcinków dla wybranego sezonu.</p>";
+      return;
     }
 
-    function renderEpisodes(seasonFilter = "all") {
-      const list = document.getElementById("list");
-      list.innerHTML = "";
+    filtered.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "item";
 
-      const filtered = seasonFilter === "all"
-        ? allEpisodes
-        : allEpisodes.filter(e => String(e.season) === String(seasonFilter));
+      div.innerHTML = `
+        <img src="${item.thumbnail}" alt="${item.title}">
+        <div class="text">
+          <h2>${item.title}</h2>
+          <p>${item.description}</p>
+          <button class="download-btn" data-episode="${item.episodeNumber}">Pobierz</button>
+        </div>
+      `;
 
-      if (filtered.length === 0) {
-        list.innerHTML = "<p>Brak odcinków dla wybranego sezonu.</p>";
-        return;
-      }
-
-      filtered.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "item";
-
-        div.innerHTML = `
-          <img src="${item.thumbnail}" alt="${item.title}">
-          <div class="text">
-            <h2>${item.title}</h2>
-            <p>${item.description}</p>
-            <button class="download-btn" data-episode="${item.episodeNumber}">Pobierz</button>
-          </div>
-        `;
-
-        list.appendChild(div);
-      });
-
-      document.querySelectorAll('.download-btn').forEach(button => {
-        button.addEventListener('click', () => {
-          const episode = button.getAttribute('data-episode');
-          const downloadUrl = \`/download?odcinek=\${encodeURIComponent(episode)}\`;
-          window.location.href = downloadUrl;
-        });
-      });
-    }
-
-    document.getElementById("seasonSelect").addEventListener("change", e => {
-      renderEpisodes(e.target.value);
+      list.appendChild(div);
     });
 
-    fetch('static/episodes_merged.json')
-      .then(response => response.json())
-      .then(data => {
-        allEpisodes = data;
-        createSeasonOptions();
-
-        const sezonParam = getUrlParam("sezon");
-        if (sezonParam !== null) {
-          document.getElementById("seasonSelect").value = sezonParam;
-          renderEpisodes(sezonParam);
-        } else {
-          renderEpisodes();
-        }
+    document.querySelectorAll('.download-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const episode = button.getAttribute('data-episode');
+        window.location.href = `/download?odcinek=${encodeURIComponent(episode)}`;
       });
+    });
+  }
 
-    function getUrlParam(name) {
-      const params = new URLSearchParams(window.location.search);
-      return params.get(name);
-    }
-  </script>
+  document.getElementById("seasonSelect").addEventListener("change", e => {
+    renderEpisodes(e.target.value);
+  });
+
+  fetch('static/episodes_merged.json')
+    .then(response => response.json())
+    .then(data => {
+      allEpisodes = data;
+      createSeasonOptions();
+
+      const sezonParam = getUrlParam("sezon");
+      if (sezonParam !== null) {
+        document.getElementById("seasonSelect").value = sezonParam;
+        renderEpisodes(sezonParam);
+      } else {
+        renderEpisodes();
+      }
+    })
+    .catch(error => {
+      console.error("Błąd ładowania JSON:", error);
+      document.getElementById("list").innerHTML = "<p>Błąd ładowania danych JSON.</p>";
+    });
+
+  function getUrlParam(name) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name);
+  }
+});
+</script>
   </div>
 </body>
 </html>
