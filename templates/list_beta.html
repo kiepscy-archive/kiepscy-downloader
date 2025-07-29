@@ -5,11 +5,59 @@
   <title>Lista odcinków</title>
   <style>
     body {
+      margin: 0;
+      padding: 0;
       font-family: sans-serif;
+      background-image: url("{{ url_for('static', filename='background.jpg') }}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: brightness(0.95);
     }
-    #filter {
+
+    .container {
+      background: rgba(255, 255, 255, 0.85);
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      max-width: 900px;
+      width: 90%;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 20px;
+      flex-wrap: wrap;
     }
+
+    .top-bar h1 {
+      margin: 0;
+      font-size: 1.8em;
+    }
+
+    #filter {
+      margin-top: 10px;
+    }
+
+    .back-link {
+      text-decoration: none;
+      background: #007bff;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 0.9em;
+    }
+
+    .back-link:hover {
+      background: #0056b3;
+    }
+
     .item {
       display: flex;
       align-items: flex-start;
@@ -17,22 +65,27 @@
       border-bottom: 1px solid #ccc;
       padding: 10px 0;
     }
+
     .item img {
       width: 100px;
       height: auto;
       object-fit: cover;
     }
+
     .text {
       max-width: 600px;
     }
+
     .text h2 {
       margin: 0 0 5px;
       font-size: 18px;
     }
+
     .text p {
       margin: 0 0 10px;
       color: #555;
     }
+
     .download-btn {
       padding: 6px 12px;
       background: #007bff;
@@ -41,6 +94,7 @@
       border-radius: 4px;
       cursor: pointer;
     }
+
     .download-btn:hover {
       background: #0056b3;
     }
@@ -48,21 +102,25 @@
 </head>
 <body>
 
-  <h1>Lista odcinków</h1>
+  <div class="container">
+    <div class="top-bar">
+      <h1>Lista odcinków</h1>
+      <a href="/" class="back-link">Powrót do strony głównej</a>
+    </div>
 
-  <div id="filter">
-    <label for="seasonSelect">Wybierz sezon:</label>
-    <select id="seasonSelect">
-      <option value="all">Wszystkie</option>
-    </select>
+    <div id="filter">
+      <label for="seasonSelect">Wybierz sezon:</label>
+      <select id="seasonSelect">
+        <option value="all">Wszystkie</option>
+      </select>
+    </div>
+
+    <div id="list">Wczytywanie...</div>
   </div>
-
-  <div id="list">Wczytywanie...</div>
 
   <script>
     let allEpisodes = [];
 
-    // Tworzy opcje sezonów (1–31 + specjalne = 32)
     function createSeasonOptions() {
       const select = document.getElementById("seasonSelect");
       for (let i = 1; i <= 31; i++) {
@@ -77,7 +135,6 @@
       select.appendChild(special);
     }
 
-    // Renderuje listę odcinków, opcjonalnie filtrowaną po sezonie
     function renderEpisodes(seasonFilter = "all") {
       const list = document.getElementById("list");
       list.innerHTML = "";
@@ -107,22 +164,19 @@
         list.appendChild(div);
       });
 
-      // Obsługa kliknięć przycisków "Pobierz"
       document.querySelectorAll('.download-btn').forEach(button => {
         button.addEventListener('click', () => {
           const episode = button.getAttribute('data-episode');
-          const downloadUrl = `/download?odcinek=${encodeURIComponent(episode)}`;
+          const downloadUrl = \`/download?odcinek=\${encodeURIComponent(episode)}\`;
           window.location.href = downloadUrl;
         });
       });
     }
 
-    // Obsługuje zmianę sezonu
     document.getElementById("seasonSelect").addEventListener("change", e => {
       renderEpisodes(e.target.value);
     });
 
-    // Ładowanie danych z JSON i render
     fetch('static/episodes_merged.json')
       .then(response => response.json())
       .then(data => {
@@ -131,19 +185,17 @@
 
         const sezonParam = getUrlParam("sezon");
         if (sezonParam !== null) {
-          const select = document.getElementById("seasonSelect");
-          select.value = sezonParam;
+          document.getElementById("seasonSelect").value = sezonParam;
           renderEpisodes(sezonParam);
         } else {
           renderEpisodes();
         }
-      })
-    
-    function getUrlParam(name) {
-  const params = new URLSearchParams(window.location.search);
-  return params.get(name);
-}
-  </script>
+      });
 
+    function getUrlParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+  </script>
 </body>
 </html>
