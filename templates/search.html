@@ -25,6 +25,19 @@
         margin-bottom: 40px;
     }
 
+    .back-link {
+      text-decoration: none;
+      background: #007bff;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 0.9em;
+    }
+
+    .back-link:hover {
+      background: #0056b3;
+    }
+
     form {
         background: rgba(255, 255, 255, 0.85);
         padding: 20px;
@@ -70,6 +83,7 @@
         <br><br><center><a href="/instrukcja" class="help-link">Jak używać?</a></center>
     </form>
     <br>
+    <center><a href="/" class="back-link">Powrót do strony głównej</a></center>
     {% if message %}
         <p><strong>{{ message }}</strong></p>
     {% endif %}
