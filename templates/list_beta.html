@@ -185,7 +185,19 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll('.download-btn').forEach(button => {
       button.addEventListener('click', () => {
         const episode = button.getAttribute('data-episode');
-        window.location.href = `/download?odcinek=${encodeURIComponent(episode)}`;
+        const form = document.createElement("form");
+        form.action = "/download";
+        form.method = "GET";
+
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "odcinek";
+        input.value = episode;
+
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+
       });
     });
   }
