@@ -115,13 +115,17 @@ def index():
 def instrukcja():
     return render_template("instrukcja.html")
 
-@app.route("/list_beta")
-def list_beta():
-    return render_template("list_beta.html")
+@app.route("/list")
+def list():
+    return render_template("list.html")
 
 @app.route("/random_beta")
 def random_beta():
     return render_template("random_beta.html")
+
+@app.route("/search")
+def search():
+    return render_template("search.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
