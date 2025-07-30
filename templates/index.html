@@ -1,78 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <title>Pobierz odcinek - Kiepscy Downloader</title>
-    <style>
+  <meta charset="UTF-8">
+  <title>Kiepscy Downloader – Strona główna</title>
+  <style>
     body {
-        margin: 0;
-        padding: 0;
-        font-family: sans-serif;
-        background-image: url("{{ url_for('static', filename='background.jpg') }}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: brightness(0.95);
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-image: url("static/background.jpg");
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
     }
 
     .logo {
-        max-width: 300px;
-        margin-bottom: 40px;
+      width: 300px;
+      max-width: 90%;
+      margin-bottom: 30px;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
     }
 
-    form {
-        background: rgba(255, 255, 255, 0.85);
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     }
 
-    input, button {
-        margin-top: 10px;
-        padding: 10px;
-        font-size: 1rem;
+    .menu button,
+    .menu a {
+      padding: 20px 40px;
+      font-size: 1.5rem;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: background-color 0.3s;
     }
 
-    label {
-        font-weight: bold;
+    .menu button:hover,
+    .menu a:hover {
+      background-color: #c82333;
     }
-
-    p {
-        margin-top: 20px;
-        font-weight: bold;
-    }
-
-    .help-link {
-    margin-top: 20px;
-    color: #0044cc;
-    text-decoration: underline;
-    cursor: pointer;
-    font-size: 0.95rem;
-}
-
-.help-link:hover {
-    color: #001177;
-}
-        
-</style>
+  </style>
 </head>
 <body>
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
-    <form action="/download" method="get">
-        <center><label>Podaj numer odcinka:</label></center><br>
-        <input type="text" name="odcinek" />
-        <input type="submit" value="Pobierz" />
-        <br><br><center><a href="/instrukcja" class="help-link">Jak używać?</a></center>
-    </form>
-    <br>
-    <center><strong><font color="#C9391C">Wszystkie odcinki są już dostępne do pobrania :)</color></strong></center>
-    {% if message %}
-        <p><strong>{{ message }}</strong></p>
-    {% endif %}
+
+  <div class="wrapper">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+
+    <div class="menu">
+      <a href="/list">📺 Lista odcinków</a>
+      <a href="/search">🔎 Wpisz numer odcinka</a>
+      <button onclick="losuj()">🎲 Losowy odcinek</button>
+    </div>
+  </div>
+
+<script>
+  function losuj() {
+    const maks = 590;
+    const numer = Math.floor(Math.random() * maks);
+
+    const form = document.createElement("form");
+    form.action = "/download";
+    form.method = "GET";
+
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "odcinek";
+    input.value = numer;
+
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+  }
+</script>
+
 </body>
 </html>
