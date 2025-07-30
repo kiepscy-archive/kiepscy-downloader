@@ -119,5 +119,9 @@ def instrukcja():
 def list_beta():
     return render_template("list_beta.html")
 
+@app.route("/random_beta")
+def random_beta():
+    return render_template("random_beta.html")
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
