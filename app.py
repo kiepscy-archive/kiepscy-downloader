@@ -131,5 +131,9 @@ def search():
 def test_player_beta():
     return render_template("test_player_beta.html")
 
+@app.route("/random")
+def random():
+    return render_template("random.html")
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
