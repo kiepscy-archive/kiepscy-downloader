@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Twój wylosowany odcinek</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url("static/background.jpg");
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      max-width: 800px;
+      text-align: center;
+    }
+
+    .item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .item img {
+      width: 300px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-size: 2em;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    .download-btn {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .download-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 20px;
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Twój wylosowany odcinek</h1>
+    <div id="episode" class="item">Ładowanie...</div>
+    <a href="/" class="back-link">← Wróć na stronę główną</a>
+  </div>
+
+  <script>
+    fetch("static/episodes_merged.json")
+      .then(res => res.json())
+      .then(data => {
+        const randomNumber = Math.floor(Math.random() * 590);
+        const episode = data.find(ep => ep.episodeNumber == randomNumber);
+        const container = document.getElementById("episode");
+
+        if (!episode) {
+          container.innerHTML = "<p>Nie znaleziono odcinka.</p>";
+          return;
+        }
+
+        container.innerHTML = `
+          <img src="${episode.thumbnail}" alt="${episode.title}">
+          <h2>${episode.title}</h2>
+          <p>${episode.description}</p>
+          <button class="download-btn" onclick="pobierz(${episode.episodeNumber})">Pobierz</button>
+        `;
+      })
+      .catch(err => {
+        console.error("Błąd ładowania danych:", err);
+        document.getElementById("episode").innerHTML = "<p>Błąd ładowania danych JSON.</p>";
+      });
+
+    function pobierz(nr) {
+      const form = document.createElement("form");
+      form.action = "/download";
+      form.method = "GET";
+
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "odcinek";
+      input.value = nr;
+
+      form.appendChild(input);
+      document.body.appendChild(form);
+      form.submit();
+    }
+  </script>
+</body>
+</html>
