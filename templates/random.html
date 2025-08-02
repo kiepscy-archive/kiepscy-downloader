@@ -73,13 +73,39 @@
     .back-link:hover {
       text-decoration: underline;
     }
+
+    .link-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .action-link {
+      text-decoration: none;
+      background: #dc3545;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.95em;
+      transition: background 0.3s;
+    }
+
+    .action-link:hover {
+      background: #bd2130;
+    }
+
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Twój wylosowany odcinek</h1>
     <div id="episode" class="item">Ładowanie...</div>
-    <a href="/" class="back-link">← Wróć na stronę główną</a>
+    <div class="link-row">
+      <a href="/random" class="action-link">Losuj ponownie</a>
+      <a href="/" class="action-link">← Wróć na stronę główną</a>
+    </div>
   </div>
 
   <script>
